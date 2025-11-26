@@ -21,7 +21,7 @@ router.post("/", async (request, response) => {
       : await bcrypt.compare(body.password, user.passwordHash);
 
   if (!(user && passwordCorrect)) {
-    throw new UnauthorizedError();
+    throw new UnauthorizedError("invalid username or password");
   }
 
   const userForToken = {

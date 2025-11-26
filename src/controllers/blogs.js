@@ -32,12 +32,8 @@ router.post("/", tokenExtractor, async (req, res) => {
   if (!user) {
     throw new NotFoundError("User not found");
   }
-  const { author, url, title, likes } = req.body;
   const blog = await Blog.create({
-    author,
-    url,
-    title,
-    likes,
+    ...req.body,
     userId: user.id,
   });
   res.status(201).json(blog);

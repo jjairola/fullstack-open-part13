@@ -9,7 +9,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "node --watch src/index.js",
-    "psql": "docker exec -it postgres psql -U postgres"
+    "psql": "docker exec -it postgres psql -U postgres",
+    "migration:down": "node util/rollback.js"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
