@@ -44,4 +44,13 @@ Blog.init(
   }
 );
 
+
+Blog.prototype.toJSON = function() {
+  const values = { ...this.get() };
+  delete values.userId;
+  delete values.createdAt;
+  delete values.updatedAt;
+  return values;
+};
+
 module.exports = Blog;

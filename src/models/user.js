@@ -25,7 +25,7 @@ User.init({
   passwordHash: {
     type: DataTypes.STRING,
     allowNull: false
-  }
+  },
 }, {
   sequelize,
   underscored: true,
@@ -36,6 +36,8 @@ User.init({
 User.prototype.toJSON = function() {
   const values = { ...this.get() };
   delete values.passwordHash;
+  delete values.createdAt;
+  delete values.updatedAt;
   return values;
 };
 

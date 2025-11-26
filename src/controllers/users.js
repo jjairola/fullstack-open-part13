@@ -3,14 +3,15 @@ const { NotFoundError } = require("../util/errors");
 const bcrypt = require("bcrypt");
 const { User } = require("../models");
 const { Blog } = require("../models");
+const { ReadingList } = require("../models");
+const { BadRequestError } = require("../util/errors");
 
 router.get("/", async (req, res) => {
   const users = await User.findAll({
-    // exclude: ['userId'] },
     include: {
       model: Blog,
-      attributes: ['id', 'title', 'author', 'url', 'likes']
-    }
+      attributes: ["id", "title", "author", "url", "likes"],
+    },
   });
   res.json(users);
 });
@@ -27,6 +28,28 @@ router.get("/:id", async (req, res) => {
   if (!user) {
     throw new NotFoundError("User not found");
   }
+
+  const where = { userId: req.params.id };
+  const read = req.query.read;
+  if (read !== undefined) {
+    if (!["true", "false"].includes(read)) {
+      throw new BadRequestError("Read parameter not true or false");
+    }
+    where.read = read === "true";
+  }
+
+  const readingLists = await ReadingList.findAll({
+    where,
+    include: {
+      model: Blog,
+      attributes: ["id", "title", "author", "url", "likes", "year"],
+    },
+  });
+  user.dataValues.readings = readingLists.map((rl) => ({
+    ...rl.blog.dataValues,
+    readinglists: { read: rl.read, id: rl.id },
+  }));
+
   return res.json(user);
 });
 
