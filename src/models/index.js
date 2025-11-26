@@ -1,12 +1,15 @@
 const Blog = require("./blog");
 const User = require("./user");
 const ReadingList = require("./readinglist");
+const Session = require("./session");
 
 User.hasMany(Blog);
 User.hasMany(ReadingList);
 Blog.belongsTo(User);
 ReadingList.belongsTo(User, { foreignKey: "user_id" });
 ReadingList.belongsTo(Blog, { foreignKey: "blog_id" });
+User.hasMany(Session);
+Session.belongsTo(User, { foreignKey: "user_id" });
 
 // Uncomment the following lines to sync the models with the database
 
@@ -17,5 +20,6 @@ ReadingList.belongsTo(Blog, { foreignKey: "blog_id" });
 module.exports = {
   Blog,
   User,
+  Session,
   ReadingList,
 };

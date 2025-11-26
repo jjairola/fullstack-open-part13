@@ -5,6 +5,7 @@ const bcrypt = require("bcrypt");
 
 const { SECRET } = require("../util/config");
 const User = require("../models/user");
+const Session = require("../models/session");
 
 router.post("/", async (request, response) => {
   const body = request.body;
@@ -14,6 +15,10 @@ router.post("/", async (request, response) => {
       username: body.username,
     },
   });
+
+  if (user.disabled) {
+    throw new UnauthorizedError("user disabled");
+  }
 
   const passwordCorrect =
     user === null
@@ -33,9 +38,17 @@ router.post("/", async (request, response) => {
     expiresIn: 60 * 60,
   });
 
+
+  const session = await Session.create({
+    userId: user.id,
+    token,
+  });
+
   response
     .status(200)
     .send({ token, username: user.username, name: user.name });
 });
+
+
 
 module.exports = router;

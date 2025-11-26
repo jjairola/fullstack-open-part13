@@ -1,39 +1,47 @@
-const { Model, DataTypes } = require('sequelize')
+const { Model, DataTypes } = require("sequelize");
 
-const { sequelize } = require('../util/db')
+const { sequelize } = require("../util/db");
 
 class User extends Model {}
 
-User.init({
-  id: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true
+User.init(
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+    },
+    username: {
+      type: DataTypes.STRING,
+      unique: true,
+      allowNull: false,
+      validate: {
+        isEmail: true,
+      },
+    },
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    passwordHash: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    disabled: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+      allowNull: false,
+    },
   },
-  username: {
-    type: DataTypes.STRING,
-    unique: true,
-    allowNull: false,
-    validate: {
-      isEmail: true
-    }
-  },
-  name: {
-    type: DataTypes.STRING,
-    allowNull: false
-  },
-  passwordHash: {
-    type: DataTypes.STRING,
-    allowNull: false
-  },
-}, {
-  sequelize,
-  underscored: true,
-  timestamps: true,
-  modelName: 'user'
-})
+  {
+    sequelize,
+    underscored: true,
+    timestamps: true,
+    modelName: "user",
+  }
+);
 
-User.prototype.toJSON = function() {
+User.prototype.toJSON = function () {
   const values = { ...this.get() };
   delete values.passwordHash;
   delete values.createdAt;
@@ -41,4 +49,4 @@ User.prototype.toJSON = function() {
   return values;
 };
 
-module.exports = User
+module.exports = User;

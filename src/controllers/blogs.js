@@ -1,10 +1,9 @@
 const router = require("express").Router();
 const { Op } = require("sequelize");
-
 const { Blog } = require("../models");
 const { User } = require("../models");
-const { tokenExtractor } = require("../util/tokenExtractor");
 const { NotFoundError, UnauthorizedError } = require("../util/errors");
+const { requireSession } = require("../util/session");
 
 router.get("/", async (req, res) => {
   const where = {};
@@ -27,7 +26,7 @@ router.get("/", async (req, res) => {
   res.json(blogs);
 });
 
-router.post("/", tokenExtractor, async (req, res) => {
+router.post("/", requireSession, async (req, res) => {
   const user = await User.findByPk(req.decodedToken.id);
   if (!user) {
     throw new NotFoundError("User not found");
@@ -47,7 +46,7 @@ router.get("/:id", async (req, res) => {
   return res.json(blog);
 });
 
-router.delete("/:id", tokenExtractor, async (req, res) => {
+router.delete("/:id", requireSession, async (req, res) => {
   const user = await User.findByPk(req.decodedToken.id);
   if (!user) {
     throw new NotFoundError("User not found");

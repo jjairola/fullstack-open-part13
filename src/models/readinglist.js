@@ -34,4 +34,12 @@ ReadingList.init(
   }
 );
 
+ReadingList.prototype.toJSON = function() {
+  const values = { ...this.get() };
+  delete values.createdAt;
+  delete values.updatedAt;
+  return values;
+};
+
+
 module.exports = ReadingList;
