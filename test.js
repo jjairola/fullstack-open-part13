@@ -1,4 +1,42 @@
 const baseUrl = "http://localhost:3001/api/blogs";
+let token = null;
+
+async function createUser(username, password) {
+  console.log("Creating user");
+  const response = await fetch("http://localhost:3001/api/users", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ username, password, "name": username }),
+  });
+  const data = await response.json();
+  if (response.status === 201) {
+    console.log("User created");
+  } else {
+    console.log("User creation failed");
+    console.log(data);
+  }
+}
+
+async function login(username, password) {
+  console.log("Logging in");
+  const response = await fetch("http://localhost:3001/api/login", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ username, password }),
+  });
+  const data = await response.json();
+  if (response.status === 200) {
+    console.log("Login successful");
+    return data.token;
+  } else {
+    console.log("Login failed");
+    console.log(data);
+  }
+}
 
 async function testGetAll() {
   console.log("Testing GET /api/blogs");
@@ -25,6 +63,7 @@ async function testPost() {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify({
       author: "Test Author",
@@ -69,9 +108,11 @@ async function testUpdate(blogId, data) {
 }
 
 (async () => {
+  await createUser("test@test.com", "password");
+  token = await login("test@test.com", "password");
   const blogId = await testPost();
   let newBlog = await testGetById(blogId);
-  const updatedBlog = await testUpdate(blogId, { likes:  10 });
+  const updatedBlog = await testUpdate(blogId, { likes: 10 });
   // newBlog = await testGetById(blogId);
   // await testGetAll();
   //   await testDelete(blogId);
